@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/products_grid.dart';
+import '../widgets/main_drawer.dart';
 
 class ProductsOverviewScreen extends StatefulWidget {
   @override
@@ -14,11 +15,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       appBar: AppBar(
         title: Text('Chopim'),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}),
+          IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  '/shopping-cart',
+                );
+              }),
           IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
         ],
-
       ),
+      drawer: MainDrawer(),
       body: ProductsGrid(),
     );
     return scaffold;

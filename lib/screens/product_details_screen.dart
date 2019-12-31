@@ -68,7 +68,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  color: routeArgs['product'].color,
+                  decoration: BoxDecoration(gradient: routeArgs['product'].gradient,),
                   height: (MediaQuery.of(context).size.height -
                           MediaQuery.of(context).padding.top) *
                       0.5,

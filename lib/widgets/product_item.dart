@@ -5,6 +5,7 @@ import '../screens/product_details_screen.dart';
 
 import '../models/product.dart';
 import '../providers/products.dart';
+import '../providers/shopping_cart.dart';
 
 class ProductItem extends StatefulWidget {
   final Product product;
@@ -18,34 +19,39 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
-    final Function _toggleFavorite = Provider.of<Products>(context).toggleFavorite;
+    final ShoppingCart _cartData = Provider.of<ShoppingCart>(context);
+
+    final Function _toggleFavorite =
+        Provider.of<Products>(context).toggleFavorite;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: GestureDetector(
         onTap: () {
-            Navigator.pushNamed(
-              context,
-              ProductDetailsScreen.routeName,
-              arguments: {
-                'product': widget.product,
-              },
-            );
+          Navigator.pushNamed(
+            context,
+            ProductDetailsScreen.routeName,
+            arguments: {
+              'product': widget.product,
+            },
+          );
         },
         child: GridTile(
           child: Stack(
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  color: widget.product.color,
+                  gradient: widget.product.gradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               Positioned(
                 bottom: -20,
                 left: -20,
-                child: GestureDetector(
-                  onTap: () {},
+                child: InkWell(
+                  onTap: () {
+                    _cartData.addToCart(context, widget.product);
+                  },
                   child: CircleAvatar(
                       backgroundColor: Theme.of(context).accentColor,
                       radius: 38,
