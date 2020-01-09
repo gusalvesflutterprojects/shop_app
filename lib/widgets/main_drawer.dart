@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
-  Widget _buildDrawerTile(String title, String subtitle, IconData icon) =>
+  Widget _buildDrawerTile(
+          String title, String subtitle, IconData icon, Function navigation) =>
       Column(
         children: <Widget>[
           ListTile(
@@ -17,7 +18,7 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
             subtitle: Text(subtitle),
-            onTap: () {},
+            onTap: navigation,
           ),
           Divider(),
         ],
@@ -68,17 +69,16 @@ class MainDrawer extends StatelessWidget {
             'Shop',
             'Go buy yourself some stuff',
             Icons.shopping_cart,
+            () => Navigator.of(context).popUntil(ModalRoute.withName('/')),
           ),
           _buildDrawerTile(
             'Orders',
             'Your shit\'s here',
             Icons.shopping_basket,
+            () => Navigator.of(context).pushNamed('/my-orders'),
           ),
           _buildDrawerTile(
-            'Manage products',
-            'Manage your crap',
-            Icons.more,
-          ),
+              'Manage products', 'Manage your crap', Icons.more, () {}),
         ],
       ),
     );

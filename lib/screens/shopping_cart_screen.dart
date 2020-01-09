@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/models/product_with_quantity.dart';
+import 'package:shop_app/providers/orders.dart';
 
 import '../widgets/shopping_cart_item.dart';
+import '../widgets/nothing_to_display.dart';
 import '../providers/shopping_cart.dart';
 
 class ShoppingCartScreen extends StatelessWidget {
@@ -10,53 +13,103 @@ class ShoppingCartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ShoppingCart _cartData = Provider.of<ShoppingCart>(context);
-    final _cartItems = _cartData.cartItemsWithInfo;
+    final Orders _ordersData = Provider.of<Orders>(context, listen: false);
+    final _cartItemsWithQuantity = _cartData.cartItemsWithQuantity;
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text('My cart'),
-          centerTitle: true,
-        ),
-        body: _cartItems.isNotEmpty
-            ? ListView.builder(
-                itemCount: _cartItems.length,
-                itemBuilder: (ctx, i) => ShoppingCartItem(_cartItems[i]),
-              )
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Icon(
-                      Icons.remove_shopping_cart,
-                      size: 180,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 72),
-                      child: Column(
-                        children: <Widget>[
-                          Divider(
-                            indent: 24,
-                            endIndent: 24,
-                            color: Theme.of(context).accentColor,
+      appBar: AppBar(
+        title: Text('My cart'),
+        centerTitle: true,
+      ),
+      bottomNavigationBar: _cartItemsWithQuantity.isNotEmpty
+          ? FlatButton(
+              padding: EdgeInsets.zero,
+              shape: BeveledRectangleBorder(),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              onPressed: () {
+                _ordersData.addOrder(
+                  context,
+                  _cartItemsWithQuantity
+                      .map(
+                        (item) => ProductWithQuantity(
+                          product: item.product,
+                          qty: item.qty,
+                        ),
+                      )
+                      .toList(),
+                );
+                _cartData.emptyCart();
+              },
+              color: Colors.orangeAccent,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(left: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Place order',
+                          style: TextStyle(
+                            fontSize: 24,
+                            color: Colors.white,
                           ),
-                          Text(
-                            'YOUR CART IS EMPTY',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w900,
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        Icon(
+                          Icons.playlist_add,
+                          color: Colors.white,
+                          size: 32,
+                        )
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                              'Total',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).accentColor,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'you\'re an embarassment to the world.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 24),
-                          ),
-                        ],
+                            Text(
+                                '\$${_cartData.getShoppingCartTotal().toStringAsFixed(2)}',
+                                style: TextStyle(
+                                    fontSize: 20, color: Colors.white))
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ));
+                    ],
+                  ),
+                ],
+              ),
+            )
+          : SizedBox(),
+      body: _cartItemsWithQuantity.isNotEmpty
+          ? ListView.builder(
+              itemCount: _cartItemsWithQuantity.length,
+              itemBuilder: (ctx, i) =>
+                  ShoppingCartItem(_cartItemsWithQuantity[i]),
+            )
+          : NothingToDisplay(
+              icon: Icons.remove_shopping_cart,
+              title: 'your cart is empty',
+              subtitle: 'you\'re an embarassment to the world.',
+            ),
+    );
   }
 }

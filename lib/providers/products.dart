@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 
-import '../models/product.dart';
+import './product.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -55,12 +55,26 @@ class Products with ChangeNotifier {
     ),
   ];
 
+  bool _showFavoritesOnly = false;
+
+  bool get shouldShowFavoritesOnly => _showFavoritesOnly;
+
+  void showFavoritesOnly() {
+    _showFavoritesOnly = true;
+    notifyListeners();
+  }
+
+  void showAll() {
+    _showFavoritesOnly = false;
+    notifyListeners();
+  }
+
   List<Product> get items {
     return [..._items];
   }
 
   List<Product> get favoriteItems {
-    return items.where((product) => product.isFavorite == true);
+    return _items.where((product) => product.isFavorite == true).toList();
   }
 
   void toggleFavorite(String productId) {

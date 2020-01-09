@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:random_color/random_color.dart';
+import 'package:shop_app/providers/shopping_cart.dart';
 
-import '../providers/products.dart';
+// import '../providers/products.dart';
+// import '../providers/product.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   static const String routeName = '/product-details';
@@ -13,8 +15,9 @@ class ProductDetailsScreen extends StatefulWidget {
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   ScrollController _scrollController;
-  bool _shouldShowHeader = false;
   Color _randomColor;
+  bool _shouldShowHeader = false;
+  int _quantity;
 
   void _scrollListener() {
     if (_scrollController.offset > MediaQuery.of(context).padding.top)
@@ -23,27 +26,42 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       setState(() => _shouldShowHeader = false);
   }
 
+  void _decreaseQuantity() {
+    if (_quantity > 1) setState(() => _quantity--);
+  }
+
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
     _randomColor =
         RandomColor().randomColor(colorBrightness: ColorBrightness.dark);
+    _shouldShowHeader = false;
+    _quantity = 1;
     super.initState();
   }
 
   Widget build(BuildContext context) {
-    final Products _productsData = Provider.of<Products>(context);
-    final Function _toggleFavorite = _productsData.toggleFavorite;
+    // final Products _productsData = Provider.of<Products>(context);
+    final ShoppingCart _cartData = Provider.of<ShoppingCart>(context, listen: false);
+    // final product = Provider.of<Product>(context);
+    // final Function _toggleFavorite = _productsData.toggleFavorite;
+
+
+    // print('=========product: ${product}');
+    
 
     final routeArgs =
         ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
 
     return Scaffold(
       bottomNavigationBar: FlatButton(
+        shape: BeveledRectangleBorder(),
         padding: EdgeInsets.all(12),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        onPressed: () {},
+        onPressed: () {
+          _cartData.addToCart(context, routeArgs['product'], _quantity);
+        },
         color: _randomColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -68,13 +86,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  decoration: BoxDecoration(gradient: routeArgs['product'].gradient,),
+                  decoration: BoxDecoration(
+                    gradient: routeArgs['product'].gradient,
+                  ),
                   height: (MediaQuery.of(context).size.height -
                           MediaQuery.of(context).padding.top) *
                       0.5,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -94,18 +115,31 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Container(
                         width: 90,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Icon(Icons.add),
-                                Text('4'),
-                                Icon(Icons.remove),
+                                GestureDetector(
+                                  onTap: () => setState(() => _quantity++),
+                                  child: Container(
+                                    child: Icon(Icons.add),
+                                    color: Colors.greenAccent,
+                                  ),
+                                ),
+                                Text('$_quantity'),
+                                GestureDetector(
+                                  onTap: _decreaseQuantity,
+                                  child: Container(
+                                    child: Icon(Icons.remove),
+                                    color: Colors.redAccent,
+                                  ),
+                                ),
                               ],
                             ),
                             GestureDetector(
                               onTap: () =>
-                                  _toggleFavorite(routeArgs['product'].id),
+                                  routeArgs['product'].toggleFavorite(),
                               child: Icon(
                                 routeArgs['product'].isFavorite
                                     ? Icons.favorite

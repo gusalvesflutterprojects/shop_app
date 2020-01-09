@@ -3,14 +3,14 @@ import 'package:provider/provider.dart';
 
 import '../screens/product_details_screen.dart';
 
-import '../models/product.dart';
-import '../providers/products.dart';
+import '../providers/product.dart';
+// import '../providers/products.dart';
 import '../providers/shopping_cart.dart';
 
 class ProductItem extends StatefulWidget {
-  final Product product;
+  // final Product product;
 
-  ProductItem(this.product);
+  // ProductItem(this.product);
 
   @override
   _ProductItemState createState() => _ProductItemState();
@@ -19,29 +19,28 @@ class ProductItem extends StatefulWidget {
 class _ProductItemState extends State<ProductItem> {
   @override
   Widget build(BuildContext context) {
-    final ShoppingCart _cartData = Provider.of<ShoppingCart>(context);
-
-    final Function _toggleFavorite =
-        Provider.of<Products>(context).toggleFavorite;
+    final product = Provider.of<Product>(context, listen: false);
+    final ShoppingCart _cartData =
+        Provider.of<ShoppingCart>(context, listen: false);
+    // final Function _toggleFavorite =
+    //     Provider.of<Products>(context, listen: false).toggleFavorite;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(18),
       child: GestureDetector(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            ProductDetailsScreen.routeName,
-            arguments: {
-              'product': widget.product,
-            },
-          );
-        },
+        onTap: () => Navigator.pushNamed(
+          context,
+          ProductDetailsScreen.routeName,
+          arguments: {
+            'product': product,
+          },
+        ),
         child: GridTile(
           child: Stack(
             children: <Widget>[
               Container(
                 decoration: BoxDecoration(
-                  gradient: widget.product.gradient,
+                  gradient: product.gradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
@@ -50,15 +49,16 @@ class _ProductItemState extends State<ProductItem> {
                 left: -20,
                 child: InkWell(
                   onTap: () {
-                    _cartData.addToCart(context, widget.product);
+                    _cartData.addToCart(context, product, 1);
                   },
                   child: CircleAvatar(
-                      backgroundColor: Theme.of(context).accentColor,
-                      radius: 38,
-                      child: Icon(
-                        Icons.shopping_cart,
-                        color: Colors.yellowAccent,
-                      )),
+                    backgroundColor: Theme.of(context).accentColor,
+                    radius: 38,
+                    child: Icon(
+                      Icons.shopping_cart,
+                      color: Colors.yellowAccent,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -69,16 +69,19 @@ class _ProductItemState extends State<ProductItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  widget.product.title,
+                  product.title,
                   style: TextStyle(fontSize: 18),
                 ),
                 GestureDetector(
-                  onTap: () => _toggleFavorite(widget.product.id),
-                  child: Icon(
-                    widget.product.isFavorite
-                        ? Icons.favorite
-                        : Icons.favorite_border,
-                    color: Colors.red,
+                  onTap: () => product.toggleFavorite(),
+                  child: Consumer<Product>(
+                    builder: (c, product, child) => Icon(
+                      product.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
+                    child: Text('') //here goes static data and it is passed as the child argument to the function above,
                   ),
                 ),
               ],
@@ -90,7 +93,7 @@ class _ProductItemState extends State<ProductItem> {
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  '\$${widget.product.price}',
+                  '\$${product.price}',
                   style: TextStyle(fontSize: 28),
                 ),
               ),
