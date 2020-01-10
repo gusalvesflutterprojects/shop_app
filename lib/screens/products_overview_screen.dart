@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/shopping_cart.dart';
 
 import '../widgets/products_grid.dart';
 import '../widgets/main_drawer.dart';
+import '../widgets/badge.dart';
 
+import '../providers/shopping_cart.dart';
 import '../providers/products.dart';
 
 class ProductsOverviewScreen extends StatefulWidget {
@@ -20,35 +21,47 @@ enum FilterOptions {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   @override
   Widget build(BuildContext context) {
-    print('rebuild _ProductsOverviewScreenState');
     final Products _productsData =
         Provider.of<Products>(context, listen: false);
+
+    _buildPopupMenuItem(
+      FilterOptions value,
+      IconData icon,
+      Color color,
+      String title,
+    ) =>
+        PopupMenuItem(
+          value: value,
+          child: Row(
+            children: <Widget>[
+              Icon(
+                icon,
+                color: color,
+              ),
+              Text(' $title'),
+            ],
+          ),
+        );
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Chopim'),
         actions: <Widget>[
           IconButton(
-              icon: Stack(children: <Widget>[
-                Icon(Icons.shopping_cart),
-                Positioned(
-                  bottom: -5,
-                  right: -5,
-                  child: CircleAvatar(
-                    radius: 8,
-                    child: Consumer<ShoppingCart>(
-                      builder: (c, cartData, child) => (Text(
-                        '${cartData.cartItemsProducts.length}',
-                      )),
-                    ),
-                  ),
-                )
-              ]),
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  '/shopping-cart',
-                );
-              }),
+            icon: Icon(Icons.tag_faces),
+            onPressed: () => Navigator.pushNamed(
+              context,
+              '/fon'
+            ),
+          ),
+          Consumer<ShoppingCart>(
+            builder: (ctx, cartData, ch) => Badge(
+              value: cartData.cartItemsCount,
+              color: Theme.of(context).primaryColor.withRed(230),
+              icon: ch,
+            ),
+            child: Icon(Icons.shopping_cart),
+          ),
           PopupMenuButton(
             icon: Icon(Icons.filter_list),
             onSelected: (FilterOptions selectedValue) {
@@ -57,29 +70,17 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                   : _productsData.showAll();
             },
             itemBuilder: (_) => [
-              PopupMenuItem(
-                value: FilterOptions.Favorites,
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.favorite,
-                      color: Colors.redAccent,
-                    ),
-                    Text(' Favorites'),
-                  ],
-                ),
+              _buildPopupMenuItem(
+                FilterOptions.All,
+                Icons.grid_on,
+                Theme.of(context).accentColor,
+                'All products',
               ),
-              PopupMenuItem(
-                value: FilterOptions.All,
-                child: Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.grid_on,
-                      color: Theme.of(context).accentColor,
-                    ),
-                    Text(' All products'),
-                  ],
-                ),
+              _buildPopupMenuItem(
+                FilterOptions.Favorites,
+                Icons.favorite,
+                Colors.red,
+                'Favorites',
               ),
             ],
           )

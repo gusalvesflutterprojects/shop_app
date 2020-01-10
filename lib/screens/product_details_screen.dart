@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:random_color/random_color.dart';
-import 'package:shop_app/providers/shopping_cart.dart';
 
-// import '../providers/products.dart';
-// import '../providers/product.dart';
+import '../providers/shopping_cart.dart';
+import '../providers/product.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   static const String routeName = '/product-details';
@@ -42,17 +41,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Widget build(BuildContext context) {
-    // final Products _productsData = Provider.of<Products>(context);
-    final ShoppingCart _cartData = Provider.of<ShoppingCart>(context, listen: false);
-    // final product = Provider.of<Product>(context);
-    // final Function _toggleFavorite = _productsData.toggleFavorite;
+    final ShoppingCart _cartData =
+        Provider.of<ShoppingCart>(context, listen: false);
 
-
-    // print('=========product: ${product}');
-    
-
-    final routeArgs =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final Product _product = Provider.of<Product>(context, listen: false);
 
     return Scaffold(
       bottomNavigationBar: FlatButton(
@@ -60,7 +52,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         padding: EdgeInsets.all(12),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         onPressed: () {
-          _cartData.addToCart(context, routeArgs['product'], _quantity);
+          _cartData.addToCart(context, _product, _quantity);
         },
         color: _randomColor,
         child: Row(
@@ -85,13 +77,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: routeArgs['product'].gradient,
+                Hero(
+                  tag: "${_product.id}Image",
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: _product.gradient,
+                    ),
+                    height: (MediaQuery.of(context).size.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.5,
                   ),
-                  height: (MediaQuery.of(context).size.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.5,
                 ),
                 Padding(
                   padding:
@@ -102,13 +97,27 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          Text(
-                            routeArgs['product'].title,
-                            style: TextStyle(fontSize: 42),
+                          Hero(
+                            key: ValueKey("${_product.id}Title"),
+                            tag: "${_product.id}Title",
+                            child: Material(
+                              type: MaterialType.transparency, // likely needed
+                              child: Text(
+                                _product.title,
+                                style: TextStyle(fontSize: 42),
+                              ),
+                            ),
                           ),
-                          Text(
-                            '\$ ${routeArgs['product'].price}',
-                            style: TextStyle(fontSize: 24),
+                          Hero(
+                            key: ValueKey("${_product.id}Price"),
+                            tag: "${_product.id}Price",
+                            child: Material(
+                              type: MaterialType.transparency, // likely needed
+                              child: Text(
+                                '\$ ${_product.price}',
+                                style: TextStyle(fontSize: 24),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -116,6 +125,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         width: 90,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             Column(
                               mainAxisSize: MainAxisSize.min,
@@ -137,16 +147,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ],
                             ),
-                            GestureDetector(
-                              onTap: () =>
-                                  routeArgs['product'].toggleFavorite(),
-                              child: Icon(
-                                routeArgs['product'].isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: Colors.red,
-                                size: 54,
+                            Hero(
+                              tag: "${_product.id}Favorite",
+                              child: GestureDetector(
+                                onTap: () => _product.toggleFavorite(),
+                                child: Consumer<Product>(
+                                  builder: (ctx, prod, ch) => Icon(
+                                    prod.isFavorite
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: Colors.red,
+                                    size: 54,
+                                  ),
+                                ),
                               ),
+                              
                             ),
                           ],
                         ),
@@ -157,8 +172,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Container(
-                      height: 800,
-                      child: Text('${routeArgs['product'].description}')),
+                      height: 800, child: Text('${_product.description}')),
                 ),
               ],
             ),

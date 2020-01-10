@@ -30,7 +30,7 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/images/waiting.png
+    - assets/nanisore.jpeg
 
   fonts:
     - family: Roboto

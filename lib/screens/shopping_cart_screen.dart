@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/models/product_with_quantity.dart';
-import 'package:shop_app/providers/orders.dart';
 
 import '../widgets/shopping_cart_item.dart';
 import '../widgets/nothing_to_display.dart';
+
+import '../models/product_with_quantity.dart';
 import '../providers/shopping_cart.dart';
+import '../providers/orders.dart';
 
 class ShoppingCartScreen extends StatelessWidget {
   static const routeName = '/shopping-cart';
@@ -87,7 +88,7 @@ class ShoppingCartScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                                '\$${_cartData.getShoppingCartTotal().toStringAsFixed(2)}',
+                                '\$${_cartData.shoppingCartTotal.toStringAsFixed(2)}',
                                 style: TextStyle(
                                     fontSize: 20, color: Colors.white))
                           ],

@@ -16,27 +16,70 @@ class ShoppingCartItem extends StatelessWidget {
         Provider.of<ShoppingCart>(context, listen: false);
 
     return Dismissible(
+      key: ValueKey(cartItem.product.id),
       onDismissed: (_) => _cartData.removeFromCart(cartItem.product.id),
       confirmDismiss: (DismissDirection direction) async {
         final bool res = await showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text("Remove item?"),
-              content: Text("Are you sure you wish to remove ${cartItem.product.title} from your cart?"),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text("CANCEL"),
-                ),
-                FlatButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text(
-                    "REMOVE",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              backgroundColor: Colors.white70,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(48)),
+                    padding: EdgeInsets.all(20),
+                    color: Colors.blueAccent,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Icon(Icons.cancel),
+                        SizedBox(
+                          width: 6,
+                        ),
+                        Text(
+                          ' KEEP ITEM',
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                    onPressed: () => Navigator.of(context).pop(false),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 12,
+                  ),
+                  FlatButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(48)),
+                    padding: EdgeInsets.all(20),
+                    color: Colors.redAccent,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        const Icon(
+                          Icons.delete,
+                        ),
+                        SizedBox(
+                          width: 12,
+                        ),
+                        const Text(
+                          "REMOVE",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    onPressed: () => Navigator.of(context).pop(true),
+                  ),
+                ],
+              ),
             );
           },
         );
@@ -45,35 +88,30 @@ class ShoppingCartItem extends StatelessWidget {
       direction: DismissDirection.endToStart,
       background: Container(
         color: Colors.redAccent,
-        child: Padding(
+        child: Container(
+          alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Icon(
-                Icons.delete,
-                size: 32,
-              ),
-              Text(
-                'Remove item',
-                style: TextStyle(fontSize: 18),
-              ),
-            ],
+          child: Icon(
+            Icons.delete,
+            size: 32,
           ),
         ),
       ),
-      key: UniqueKey(),
       child: Column(
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
               children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  height: MediaQuery.of(context).size.width * 0.2,
-                  decoration: BoxDecoration(
-                    gradient: cartItem.product.gradient,
+                Hero(
+                  key: ValueKey(cartItem.product.id),
+                  tag: "${cartItem.product.id}Image",
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    height: MediaQuery.of(context).size.width * 0.2,
+                    decoration: BoxDecoration(
+                      gradient: cartItem.product.gradient,
+                    ),
                   ),
                 ),
                 Expanded(

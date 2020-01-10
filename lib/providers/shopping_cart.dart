@@ -5,7 +5,7 @@ import 'package:shop_app/models/product_with_quantity.dart';
 import '../providers/product.dart';
 
 class ShoppingCart with ChangeNotifier {
-  List<ProductWithQuantity> _cartItems = [
+  List<ProductWithQuantity> _items = [
     ProductWithQuantity(
       product: Product(
         id: 'p4',
@@ -24,15 +24,22 @@ class ShoppingCart with ChangeNotifier {
   ];
 
   List<Product> get cartItemsProducts =>
-      [..._cartItems.map((item) => item.product)];
+      [..._items.map((item) => item.product)];
 
-  List<dynamic> get cartItemsWithQuantity => [..._cartItems];
+  List<dynamic> get cartItemsWithQuantity => [..._items];
+
+  double get shoppingCartTotal => cartItemsWithQuantity.fold(
+        0,
+        (val, item) => val + (item.product.price * item.qty),
+      );
+
+  int get cartItemsCount => _items.length;
 
   void addToCart(BuildContext ctx, Product product, int quantity) {
     final idx = cartItemsProducts.indexWhere((prd) => prd.id == product.id);
 
     if (idx == -1)
-      _cartItems.add(
+      _items.add(
         ProductWithQuantity(
           product: product,
           qty: quantity,
@@ -45,30 +52,25 @@ class ShoppingCart with ChangeNotifier {
 
   void incrementCartProduct(String productId) {
     final idx = cartItemsProducts.indexWhere((prd) => prd.id == productId);
-    _cartItems[idx].qty++;
+    _items[idx].qty++;
     notifyListeners();
   }
 
   void decrementCartProduct(String productId) {
     final idx = cartItemsProducts.indexWhere((prd) => prd.id == productId);
-    _cartItems[idx].qty == 1 ? _cartItems.removeAt(idx) : _cartItems[idx].qty--;
+    _items[idx].qty == 1 ? _items.removeAt(idx) : _items[idx].qty--;
     notifyListeners();
   }
 
   void removeFromCart(String productId) {
     final idx = cartItemsProducts.indexWhere((prd) => prd.id == productId);
 
-    _cartItems.removeAt(idx);
+    _items.removeAt(idx);
     notifyListeners();
   }
 
   void emptyCart() {
-    _cartItems.clear();
+    _items.clear();
     notifyListeners();
   }
-
-  double getShoppingCartTotal() => cartItemsWithQuantity.fold(
-        0,
-        (val, item) => val + (item.product.price * item.qty),
-      );
 }
