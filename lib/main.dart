@@ -6,6 +6,9 @@ import './screens/products_overview_screen.dart';
 import './screens/shopping_cart_screen.dart';
 import './screens/orders_screen.dart';
 import './screens/order_completed.dart';
+import './screens/user_products_screen.dart';
+import './screens/edit_product_screen.dart';
+import './screens/add_product_screen.dart';
 
 import 'providers/product.dart';
 import 'providers/products.dart';
@@ -21,13 +24,13 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (ctx) => Products(),
+          create: (_) => Products(),
         ),
         ChangeNotifierProvider(
-          create: (ctx) => ShoppingCart(),
+          create: (_) => ShoppingCart(),
         ),
         ChangeNotifierProvider(
-          create: (ctx) => Orders(),
+          create: (_) => Orders(),
         ),
       ],
       child: MaterialApp(
@@ -35,17 +38,18 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.purple,
           accentColor: Colors.amber,
           fontFamily: 'Nunito',
+          selectedRowColor: Colors.blue.withOpacity(0.4),
         ),
         title: 'Chopim App',
         initialRoute: '/',
         onGenerateRoute: (RouteSettings routeData) {
-          final _args = routeData.arguments as Map;
+          final _args = routeData.arguments as Map<String, dynamic>;          
           switch (routeData.name) {
             case ProductDetailsScreen.routeName:
             final product = _args['product'] as Product;
               return MaterialPageRoute(
                 settings: routeData,
-                builder: (ctx) => ChangeNotifierProvider.value(
+                builder: (_) => ChangeNotifierProvider.value(
                   value: product,
                   child: ProductDetailsScreen(),
                 ),
@@ -53,15 +57,18 @@ class MyApp extends StatelessWidget {
               break;
             default:
               return MaterialPageRoute(
-                builder: (c) => NotFound(),
+                builder: (_) => NotFound(),
               );
           }
         },
         routes: {
-          '/': (ctx) => ProductsOverviewScreen(),
-          ShoppingCartScreen.routeName: (ctx) => ShoppingCartScreen(),
-          OrdersScreen.routeName: (ctx) => OrdersScreen(),
-          OrderCompleted.routeName: (ctx) => OrderCompleted(),
+          '/': (_) => ProductsOverviewScreen(),
+          ShoppingCartScreen.routeName: (_) => ShoppingCartScreen(),
+          OrdersScreen.routeName: (_) => OrdersScreen(),
+          OrderCompleted.routeName: (_) => OrderCompleted(),
+          UserProductsScreen.routeName: (_) => UserProductsScreen(),
+          EditProductScreen.routeName: (_) => EditProductScreen(),
+          AddProductScreen.routeName: (_) => AddProductScreen(),
         },
       ),
     );

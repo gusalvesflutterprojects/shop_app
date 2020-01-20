@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'products.dart';
 
 class Product with ChangeNotifier {
   final String id;
-  final String title;
-  final String description;
-  final double price;
+  String title;
+  String description;
+  double price;
   final LinearGradient gradient;
   bool isFavorite;
 
@@ -18,8 +21,9 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavorite() {
+  void toggleFavorite(BuildContext ctx) {
     isFavorite = !isFavorite;
     notifyListeners();
+    Provider.of<Products>(ctx).notifyListeners();
   }
 }

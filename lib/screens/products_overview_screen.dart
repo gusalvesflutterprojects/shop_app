@@ -47,15 +47,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       appBar: AppBar(
         title: Text('Chopim'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.tag_faces),
-            onPressed: () => Navigator.pushNamed(
-              context,
-              '/fon'
-            ),
-          ),
           Consumer<ShoppingCart>(
-            builder: (ctx, cartData, ch) => Badge(
+            builder: (_, cartData, ch) => Badge(
               value: cartData.cartItemsCount,
               color: Theme.of(context).primaryColor.withRed(230),
               icon: ch,

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 
@@ -55,6 +57,8 @@ class Products with ChangeNotifier {
     ),
   ];
 
+  List<Product> _deletedItems = [];
+
   bool _showFavoritesOnly = false;
 
   bool get shouldShowFavoritesOnly => _showFavoritesOnly;
@@ -73,19 +77,66 @@ class Products with ChangeNotifier {
     return [..._items];
   }
 
+  List<Product> get deletedItems {
+    return [..._deletedItems];
+  }
+
   List<Product> get favoriteItems {
     return _items.where((product) => product.isFavorite == true).toList();
   }
 
-  void toggleFavorite(String productId) {
-    final idx = items.indexWhere((prod) => prod.id == productId);
+  Product getProductInfo(String productId) {
+    return _items.firstWhere((prd) => productId == prd.id);
+  }
 
-    if (idx >= 0) items[idx].isFavorite = !items[idx].isFavorite;
+  void addProduct(String title, String description, double price,
+      List<Color> gradientColors) {
+    _items.add(
+      Product(
+        id: Random().nextInt(1000000000).toString(),
+        title: title,
+        description: description,
+        price: price,
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+        ),
+      ),
+    );
     notifyListeners();
   }
 
-  void addProduct(Product product) {
-    _items.add(product);
+  void updateProduct(
+      String productId, String title, String desc, double price) {
+    final Product selectedProduct =
+        _items.firstWhere((prod) => prod.id == productId);
+
+    selectedProduct.title = title;
+    selectedProduct.description = desc;
+    selectedProduct.price = price;
+    notifyListeners();
+  }
+
+  void deleteProduct(String productId) {
+    final int prodIdx = _items.indexWhere((prod) => prod.id == productId);
+
+    _deletedItems.add(_items[prodIdx]);
+    _items.removeAt(prodIdx);
+    notifyListeners();
+  }
+
+  void restoreProduct(String productId) {
+    final int prodIdx =
+        _deletedItems.indexWhere((prod) => prod.id == productId);
+
+    _items.add(_deletedItems[prodIdx]);
+    _deletedItems.removeAt(prodIdx);
+    notifyListeners();
+  }
+
+  void emptyTrash() {
+    _deletedItems.clear();
     notifyListeners();
   }
 }

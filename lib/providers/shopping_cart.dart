@@ -1,27 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:random_color/random_color.dart';
 import 'package:shop_app/models/product_with_quantity.dart';
 
 import '../providers/product.dart';
 
 class ShoppingCart with ChangeNotifier {
-  List<ProductWithQuantity> _items = [
-    ProductWithQuantity(
-      product: Product(
-        id: 'p4',
-        title: 'A Pan',
-        description: 'Prepare any meal you want.',
-        price: 49.99,
-        gradient: LinearGradient(
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-          colors: RandomColor().randomColors(
-              count: 2, colorBrightness: ColorBrightness.veryLight),
-        ),
-      ),
-      qty: 1,
-    )
-  ];
+  List<ProductWithQuantity> _items = [];
 
   List<Product> get cartItemsProducts =>
       [..._items.map((item) => item.product)];
@@ -46,6 +29,29 @@ class ShoppingCart with ChangeNotifier {
         ),
       );
 
+    // Scaffold.of(ctx).hideCurrentSnackBar();
+    // Scaffold.of(ctx).showSnackBar(
+    //   SnackBar(
+    //     action: SnackBarAction(
+    //       label: 'UNDO',
+    //       onPressed: () => decrementCartProduct(product.id),
+    //     ),
+    //     backgroundColor: Colors.green,
+    //     elevation: 40,
+    //     duration: Duration(seconds: 2),
+    //     content: Container(
+    //       height: MediaQuery.of(ctx).size.height * 0.05,
+    //       child: Row(
+    //         mainAxisSize: MainAxisSize.min,
+    //         children: <Widget>[
+    //           Icon(Icons.check, size: 36),
+    //           Text(' Item added to cart!', style: TextStyle(fontSize: 20)),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
+    Navigator.of(ctx).popUntil(ModalRoute.withName('/'));
     Navigator.of(ctx).pushNamed('/shopping-cart');
     notifyListeners();
   }

@@ -79,7 +79,7 @@ class _ProductItemState extends State<ProductItem> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () => product.toggleFavorite(),
+                    onTap: () => product.toggleFavorite(context),
                     child: Consumer<Product>(
                       builder: (c, product, child) => Hero(
                         key: ValueKey(product.id),

@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 
 class MainDrawer extends StatelessWidget {
   Widget _buildDrawerTile(
-          String title, String subtitle, IconData icon, Function navigation) =>
+    String title,
+    String subtitle,
+    IconData icon,
+    Function navigation,
+  ) =>
       Column(
         children: <Widget>[
           ListTile(
+            contentPadding: EdgeInsets.all(12),
             leading: Icon(
               icon,
               size: 32,
@@ -20,7 +25,9 @@ class MainDrawer extends StatelessWidget {
             subtitle: Text(subtitle),
             onTap: navigation,
           ),
-          Divider(),
+          Divider(
+            height: 0,
+          ),
         ],
       );
 
@@ -44,7 +51,7 @@ class MainDrawer extends StatelessWidget {
                       size: 48,
                     ),
                     title: Text(
-                      'Go get yourself some shit',
+                      'Go buy yourself some shit',
                       style: TextStyle(
                         fontSize: 24,
                         fontFamily: 'OpenSans',
@@ -64,21 +71,24 @@ class MainDrawer extends StatelessWidget {
               ),
             ),
           ),
-          Divider(),
           _buildDrawerTile(
             'Shop',
             'Go buy yourself some stuff',
             Icons.shopping_cart,
-            () => Navigator.of(context).popUntil(ModalRoute.withName('/')),
+            () => Navigator.of(context).pushReplacementNamed('/'),
           ),
           _buildDrawerTile(
             'Orders',
             'Your shit\'s here',
             Icons.shopping_basket,
-            () => Navigator.of(context).pushNamed('/my-orders'),
+            () => Navigator.of(context).pushReplacementNamed('/my-orders'),
           ),
           _buildDrawerTile(
-              'Manage products', 'Manage your crap', Icons.more, () {}),
+            'Manage products',
+            'Manage your crap',
+            Icons.more,
+            () => Navigator.of(context).pushReplacementNamed('/user-products'),
+          ),
         ],
       ),
     );

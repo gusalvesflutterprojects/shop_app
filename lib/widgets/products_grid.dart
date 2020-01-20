@@ -24,18 +24,50 @@ class ProductsGrid extends StatelessWidget {
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
-            itemBuilder: (ctx, i) {
+            itemBuilder: (_, i) {
               return ChangeNotifierProvider.value(
                 value: _products[i],
                 child: ProductItem(),
               );
             },
           )
-        : NothingToDisplay(
-            icon: Icons.sentiment_dissatisfied,
-            title: 'shit nigga',
-            subtitle:
-                'you have no favorites yet, as you are no one\'s favorite',
+        : Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              NothingToDisplay(
+                icon: Icons.sentiment_dissatisfied,
+                title: 'shit nigga',
+                subtitle:
+                    'you have no favorites yet, as you are no one\'s favorite',
+              ),
+              SizedBox(
+                height: 12,
+              ),
+              FlatButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(48)),
+                padding: EdgeInsets.all(24),
+                color: Colors.blueAccent,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Icon(
+                      Icons.arrow_back,
+                    ),
+                    SizedBox(
+                      width: 12,
+                    ),
+                    const Text(
+                      "SEE ALL PRODUCTS",
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
+                    ),
+                  ],
+                ),
+                onPressed: () => _productsData.showAll(),
+              ),
+            ],
           );
   }
 }

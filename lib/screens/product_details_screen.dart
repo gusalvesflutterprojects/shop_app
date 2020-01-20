@@ -44,7 +44,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     final ShoppingCart _cartData =
         Provider.of<ShoppingCart>(context, listen: false);
 
-    final Product _product = Provider.of<Product>(context, listen: false);
+    final product = (ModalRoute.of(context).settings.arguments as Map<String, dynamic>)['product'];
 
     return Scaffold(
       bottomNavigationBar: FlatButton(
@@ -52,7 +52,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         padding: EdgeInsets.all(12),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         onPressed: () {
-          _cartData.addToCart(context, _product, _quantity);
+          _cartData.addToCart(context, product, _quantity);
         },
         color: _randomColor,
         child: Row(
@@ -78,10 +78,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Hero(
-                  tag: "${_product.id}Image",
+                  tag: "${product.id}Image",
                   child: Container(
                     decoration: BoxDecoration(
-                      gradient: _product.gradient,
+                      gradient: product.gradient,
                     ),
                     height: (MediaQuery.of(context).size.height -
                             MediaQuery.of(context).padding.top) *
@@ -98,23 +98,23 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Hero(
-                            key: ValueKey("${_product.id}Title"),
-                            tag: "${_product.id}Title",
+                            key: ValueKey("${product.id}Title"),
+                            tag: "${product.id}Title",
                             child: Material(
-                              type: MaterialType.transparency, // likely needed
+                              type: MaterialType.transparency,
                               child: Text(
-                                _product.title,
+                                product.title,
                                 style: TextStyle(fontSize: 42),
                               ),
                             ),
                           ),
                           Hero(
-                            key: ValueKey("${_product.id}Price"),
-                            tag: "${_product.id}Price",
+                            key: ValueKey("${product.id}Price"),
+                            tag: "${product.id}Price",
                             child: Material(
-                              type: MaterialType.transparency, // likely needed
+                              type: MaterialType.transparency,
                               child: Text(
-                                '\$ ${_product.price}',
+                                '\$ ${product.price}',
                                 style: TextStyle(fontSize: 24),
                               ),
                             ),
@@ -147,13 +147,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ),
                               ],
                             ),
-                            Hero(
-                              tag: "${_product.id}Favorite",
-                              child: GestureDetector(
-                                onTap: () => _product.toggleFavorite(),
-                                child: Consumer<Product>(
-                                  builder: (ctx, prod, ch) => Icon(
-                                    prod.isFavorite
+                            Consumer<Product>(
+                              builder: (_, prod, ch) => Hero(
+                                tag: "${product.id}Favorite",
+                                child: GestureDetector(
+                                  onTap: () => product.toggleFavorite(context),
+                                  child: Icon(
+                                    product.isFavorite
                                         ? Icons.favorite
                                         : Icons.favorite_border,
                                     color: Colors.red,
@@ -161,7 +161,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   ),
                                 ),
                               ),
-                              
                             ),
                           ],
                         ),
@@ -172,7 +171,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Container(
-                      height: 800, child: Text('${_product.description}')),
+                      height: 800, child: Text('${product.description}')),
                 ),
               ],
             ),

@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:random_color/random_color.dart';
 import 'package:uuid/uuid.dart';
 
-import '../models/order.dart';
 import '../providers/product.dart';
+import '../models/order.dart';
 import '../models/product_with_quantity.dart';
 
 class Orders with ChangeNotifier {
@@ -91,14 +92,15 @@ class Orders with ChangeNotifier {
         ),
       ],
       totalPrice: 80.00,
-    )
+    ),
   ];
 
   List<Order> get orders => [..._orders];
 
   void addOrder(
       BuildContext ctx, List<ProductWithQuantity> productsWithQuantity) {
-    _orders.add(
+    _orders.insert(
+      0,
       Order(
         id: Random().nextInt(1000000000),
         products: productsWithQuantity,

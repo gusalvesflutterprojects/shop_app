@@ -103,7 +103,7 @@ class ShoppingCartScreen extends StatelessWidget {
       body: _cartItemsWithQuantity.isNotEmpty
           ? ListView.builder(
               itemCount: _cartItemsWithQuantity.length,
-              itemBuilder: (ctx, i) =>
+              itemBuilder: (_, i) =>
                   ShoppingCartItem(_cartItemsWithQuantity[i]),
             )
           : NothingToDisplay(

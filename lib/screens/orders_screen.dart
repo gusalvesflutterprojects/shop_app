@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/order_item.dart';
+import '../widgets/main_drawer.dart';
 
 import '../providers/orders.dart';
 
@@ -18,10 +19,11 @@ class OrdersScreen extends StatelessWidget {
           title: Text('My orders'),
           centerTitle: true,
         ),
+        drawer: MainDrawer(),
         body: _orders.isNotEmpty
             ? ListView.builder(
                 itemCount: _orders.length,
-                itemBuilder: (ctx, i) => OrderItem(
+                itemBuilder: (_, i) => OrderItem(
                   id: _orders[i].id,
                   orderProducts: _orders[i].products,
                   orderDate: _orders[i].date,

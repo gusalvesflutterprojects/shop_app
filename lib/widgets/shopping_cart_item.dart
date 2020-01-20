@@ -18,73 +18,70 @@ class ShoppingCartItem extends StatelessWidget {
     return Dismissible(
       key: ValueKey(cartItem.product.id),
       onDismissed: (_) => _cartData.removeFromCart(cartItem.product.id),
-      confirmDismiss: (DismissDirection direction) async {
-        final bool res = await showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.white70,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  FlatButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(48)),
-                    padding: EdgeInsets.all(20),
-                    color: Colors.blueAccent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Icon(Icons.cancel),
-                        SizedBox(
-                          width: 6,
+      confirmDismiss: (DismissDirection direction) => showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: Colors.white70,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                FlatButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(48)),
+                  padding: EdgeInsets.all(20),
+                  color: Colors.blueAccent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Icon(Icons.cancel),
+                      SizedBox(
+                        width: 6,
+                      ),
+                      Text(
+                        ' KEEP ITEM',
+                        style: TextStyle(
+                          fontSize: 16,
                         ),
-                        Text(
-                          ' KEEP ITEM',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onPressed: () => Navigator.of(context).pop(false),
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: 12,
+                  onPressed: () => Navigator.of(context).pop(false),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                FlatButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(48)),
+                  padding: EdgeInsets.all(20),
+                  color: Colors.redAccent,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      const Icon(
+                        Icons.delete,
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      const Text(
+                        "REMOVE",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
-                  FlatButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(48)),
-                    padding: EdgeInsets.all(20),
-                    color: Colors.redAccent,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const Icon(
-                          Icons.delete,
-                        ),
-                        SizedBox(
-                          width: 12,
-                        ),
-                        const Text(
-                          "REMOVE",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    onPressed: () => Navigator.of(context).pop(true),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-        return res;
-      },
+                  onPressed: () => Navigator.of(context).pop(true),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
       direction: DismissDirection.endToStart,
       background: Container(
         color: Colors.redAccent,
