@@ -45,7 +45,28 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chopim'),
+        centerTitle: true,
+        title: Consumer<Products>(
+          builder: (ctx, prodData, child) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(prodData.shouldShowFavoritesOnly
+                  ? 'Favorites '
+                  : 'All products '),
+              prodData.shouldShowFavoritesOnly
+                  ? Icon(
+                      Icons.favorite,
+                      size: 28,
+                      color: Colors.redAccent,
+                    )
+                  : Icon(
+                      Icons.grid_on,
+                      size: 28,
+                      color: Theme.of(context).accentColor,
+                    ),
+            ],
+          ),
+        ),
         actions: <Widget>[
           Consumer<ShoppingCart>(
             builder: (_, cartData, ch) => Badge(

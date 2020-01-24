@@ -15,10 +15,11 @@ class UserProductsScreen extends StatefulWidget {
   _UserProductsScreenState createState() => _UserProductsScreenState();
 }
 
-class _UserProductsScreenState extends State<UserProductsScreen> {
+class _UserProductsScreenState extends State<UserProductsScreen>
+    with SingleTickerProviderStateMixin {
   int _currentNavigationIndex = 0;
   bool _isSelecting = false;
-  List<SelectableItem> _selectedItems = [];
+  List<SelectableItem> _selectableItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -28,24 +29,24 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
         ? productsData.deletedItems
         : productsData.items;
 
-    if (_selectedItems.isEmpty) {
-      _selectedItems = products
+    if (_selectableItems.length != products.length) {
+      _selectableItems = products
           .map((prod) => SelectableItem(id: prod.id, isSelected: false))
           .toList();
     }
 
     bool _isSelected(String id) =>
-        _selectedItems.firstWhere((item) => item.id == id).isSelected;
+        _selectableItems.firstWhere((item) => item.id == id).isSelected;
 
-    int _totalSelectedItems() =>
-        _selectedItems.fold(0, (val, item) => item.isSelected ? val + 1 : val);
+    int _totalSelectedItems() => _selectableItems.fold(
+        0, (val, item) => item.isSelected ? val + 1 : val);
 
     bool _allItemsSelected() => _totalSelectedItems() == products.length;
 
     bool _noItemsSelected() => _totalSelectedItems() == 0;
 
     void _toggleSelectSingleItem(String id) {
-      final currentItem = _selectedItems.firstWhere((item) => item.id == id);
+      final currentItem = _selectableItems.firstWhere((item) => item.id == id);
 
       setState(() => currentItem.isSelected = !currentItem.isSelected);
       if (_noItemsSelected())
@@ -57,16 +58,20 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
     void _toggleSelectAllItems() {
       setState(
         () => _allItemsSelected()
-            ? _selectedItems.forEach((item) => item.isSelected = false)
-            : _selectedItems.forEach((item) => item.isSelected = true),
+            ? _selectableItems.forEach((item) => item.isSelected = false)
+            : _selectableItems.forEach((item) => item.isSelected = true),
       );
     }
 
-    void _emptySelectedItemsList() => setState(() => _selectedItems.clear());
+    void _emptySelectedItemsList() => setState(() => _selectableItems.clear());
 
     void _removeSelected() {
-      _selectedItems.forEach((item) => productsData.deleteProduct(item.id));
-      setState(() => _selectedItems.clear());
+      _selectableItems.forEach(
+        (item) {
+          if (item.isSelected) productsData.deleteProduct(item.id);
+        },
+      );
+      setState(() => _selectableItems.clear());
     }
 
     return DefaultTabController(

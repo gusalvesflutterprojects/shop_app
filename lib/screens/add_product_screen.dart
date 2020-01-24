@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:random_color/random_color.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../providers/products.dart';
 
@@ -11,19 +12,38 @@ class AddProductScreen extends StatefulWidget {
   _AddProductScreenState createState() => _AddProductScreenState();
 }
 
-class _AddProductScreenState extends State<AddProductScreen> {
+class _AddProductScreenState extends State<AddProductScreen>
+    with SingleTickerProviderStateMixin {
   final _descriptionFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+  AnimationController _animationController;
 
   String _title;
   String _desc;
   double _price;
-  List<Color> _gradientColors = RandomColor()
-      .randomColors(count: 2, colorBrightness: ColorBrightness.veryLight);
+  LinearGradient _gradient = LinearGradient(
+    colors: RandomColor()
+        .randomColors(count: 2, colorBrightness: ColorBrightness.veryLight),
+    begin: Alignment.bottomLeft,
+    end: Alignment.topRight,
+  );
+
+  bool _isSubmitting = false;
 
   Color _randomButtonColor =
       RandomColor().randomColor(colorBrightness: ColorBrightness.veryDark);
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      duration: Duration(
+        milliseconds: 500,
+      ),
+      vsync: this,
+    );
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -46,17 +66,21 @@ class _AddProductScreenState extends State<AddProductScreen> {
     return null;
   }
 
-  void submitAddProduct(BuildContext ctx) {
+  void submitAddProduct(BuildContext ctx) async {
     bool isValid = _form.currentState.validate();
 
     if (isValid) {
+      setState(() => _isSubmitting = true);
+      _animationController.forward();
       _form.currentState.save();
-      Provider.of<Products>(context, listen: false).addProduct(
+      await Provider.of<Products>(context, listen: false).addProduct(
         _title,
         _desc,
         _price,
-        _gradientColors,
+        _gradient,
       );
+
+      setState(() => _isSubmitting = false);
 
       Navigator.of(context).pop();
       Scaffold.of(ctx).hideCurrentSnackBar();
@@ -83,17 +107,14 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 height: 40,
                 width: 40,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: _gradientColors,
-                    begin: Alignment.bottomLeft,
-                    end: Alignment.topRight,
-                  ),
+                  gradient: _gradient,
                 ),
               )
             ],
           ),
         ),
       ));
+      _animationController.stop();
     }
   }
 
@@ -111,11 +132,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           children: <Widget>[
             Container(
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: _gradientColors,
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                ),
+                gradient: _gradient,
               ),
               height: (MediaQuery.of(context).size.height -
                       MediaQuery.of(context).padding.top) *
@@ -127,8 +144,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
               color: _randomButtonColor,
               onPressed: () => setState(
-                () => _gradientColors = RandomColor().randomColors(
-                    count: 2, colorBrightness: ColorBrightness.veryLight),
+                () => _gradient = LinearGradient(
+                  colors: RandomColor().randomColors(
+                      count: 2, colorBrightness: ColorBrightness.veryLight),
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.topRight,
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -239,31 +260,38 @@ class _AddProductScreenState extends State<AddProductScreen> {
         ),
       ),
       bottomNavigationBar: Builder(
-        builder: (ctx) => Container(
-          height: 60,
+        builder: (ctx) => AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          height: _isSubmitting ? MediaQuery.of(context).size.height : 60,
           child: FlatButton(
             padding: EdgeInsets.zero,
             shape: BeveledRectangleBorder(),
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             color: Colors.orangeAccent,
             onPressed: () => submitAddProduct(previousCtx),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.save,
-                  size: 32,
-                  color: Colors.white,
-                ),
-                Text(
-                  ' Save',
-                  style: TextStyle(
-                    fontSize: 24,
+            child: _isSubmitting
+                ? SpinKitDoubleBounce(
                     color: Colors.white,
+                    size: 32.0,
+                    controller: _animationController,
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.save,
+                        size: 32,
+                        color: Colors.white,
+                      ),
+                      Text(
+                        ' Save',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: Colors.white,
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
           ),
         ),
       ),
